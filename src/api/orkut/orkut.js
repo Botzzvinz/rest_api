@@ -1,4 +1,4 @@
-const config = require('../settings');
+const config = require('../../settings');
 const axios = require('axios');
 const crypto = require("crypto");
 const QRCode = require('qrcode');
