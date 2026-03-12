@@ -61,6 +61,17 @@
       ]
     },
     {
+      "name": "Method Tag Fake",
+      "items": [
+        {
+          "name": "Method V1",
+          "desc": "Get Label Fake Telegram Chance 75%S",
+          "path": "mail/method?apikey=&nama=",
+          "innerDesc": "Buy apikey: t.me/@kepental"
+        }
+      ]
+    },
+    {
       "name": "Downloader",
       "items": [
         {
