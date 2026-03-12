@@ -35,13 +35,14 @@ error: "Isi Parameter Apikey."
 })
 }
 
-if (!config.apikey.includes(apikey)) {
+const apikeyList = config?.apikey || []
+
+if (!apikeyList.includes(apikey)) {
 return res.json({
 status: false,
 error: "Apikey Tidak Valid!."
 })
 }
-
 if (!nama) {
 return res.json({
 status: false,
@@ -77,3 +78,4 @@ error: "Gagal mengambil method."
 })
 
 }
+
