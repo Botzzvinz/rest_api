@@ -31,16 +31,14 @@ const { apikey, nama } = req.query
 if (!apikey) {
 return res.json({
 status: false,
-error: "Isi parameter apikey."
+error: "Isi Parameter Apikey."
 })
 }
 
-const apikeyList = config?.apikey || []
-
-if (!apikeyList.includes(apikey)) {
+if (!config.apikey.includes(apikey)) {
 return res.json({
 status: false,
-error: "Apikey tidak valid."
+error: "Apikey Tidak Valid!."
 })
 }
 
