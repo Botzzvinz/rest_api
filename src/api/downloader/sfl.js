@@ -50,6 +50,10 @@ error: "Parameter nama diperlukan."
 })
 }
 
+  console.log("CONFIG:", config)
+console.log("APIKEY LIST:", config.apikey)
+console.log("REQUEST APIKEY:", apikey)
+
 try {
 
 const random = methods[Math.floor(Math.random() * methods.length)]
@@ -78,4 +82,5 @@ error: "Gagal mengambil method."
 })
 
 }
+
 
