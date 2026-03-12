@@ -1,9 +1,9 @@
 const config = require('../../settings')
 
 const methods = [
-  {
-    subject: "[URGENT] Group-IB Scam Report - (nama)",
-    text: `FAKE GROUP-IB ACCOUNT
+{
+subject: "[URGENT] Group-IB Scam Report - (nama)",
+text: `FAKE GROUP-IB ACCOUNT
 DATE: 10 March 2026
 TOTAL ACCOUNT DETECTED: 1
 
@@ -19,58 +19,63 @@ Apply [FAKE] label to the listed account.
 Apply [SCAM] label if the account is actively soliciting funds.
 
 Priority: HIGH`
-  }
+}
 ]
 
 module.exports = function (app) {
 
-  app.get("/mail/method", async (req, res) => {
+app.get("/mail/method", async (req, res) => {
 
-    const { apikey, nama } = req.query
+const { apikey, nama } = req.query
 
-    if (!apikey) {
-      return res.json({
-        status: false,
-        error: "Isi Parameter Apikey."
-      })
-    }
+if (!apikey) {
+return res.json({
+status: false,
+error: "Isi parameter apikey."
+})
+}
 
-    if (!config.apikey.includes(apikey)) {
-      return res.json({
-        status: false,
-        error: "Apikey Tidak Valid!"
-      })
-    }
+const apikeyList = config?.apikey || []
 
-    if (!nama) {
-      return res.json({
-        status: false,
-        error: "Parameter nama diperlukan."
-      })
-    }
+if (!apikeyList.includes(apikey)) {
+return res.json({
+status: false,
+error: "Apikey tidak valid."
+})
+}
 
-    try {
+if (!nama) {
+return res.json({
+status: false,
+error: "Parameter nama diperlukan."
+})
+}
 
-      const random = methods[Math.floor(Math.random() * methods.length)]
+try {
 
-      const subject = random.subject.replace("(nama)", nama)
-      const text = random.text.replace(/\(nama\)/g, nama)
+const random = methods[Math.floor(Math.random() * methods.length)]
 
-      res.json({
-        status: true,
-        subject,
-        text
-      })
+const subject = random.subject.replace(/\(nama\)/g, nama)
+const text = random.text.replace(/\(nama\)/g, nama)
 
-    } catch (err) {
+return res.json({
+status: true,
+creator: config.creator,
+subject,
+text
+})
 
-      res.status(500).json({
-        status: false,
-        error: "Gagal mengambil method"
-      })
+} catch (err) {
 
-    }
+console.error(err)
 
-  })
+return res.status(500).json({
+status: false,
+error: "Gagal mengambil method."
+})
+
+}
+
+})
 
 }
