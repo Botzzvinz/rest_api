@@ -1,134 +1,76 @@
-const axios = require("axios")
-const cheerio = require("cheerio")
-const config = require('../../settings');
+const config = require('../../settings')
 
-async function skipSafelinku(url) {
-    try {
+const methods = [
+  {
+    subject: "[URGENT] Group-IB Scam Report - (nama)",
+    text: `FAKE GROUP-IB ACCOUNT
+DATE: 10 March 2026
+TOTAL ACCOUNT DETECTED: 1
 
-        const headers = {
-            "User-Agent": "Mozilla/5.0",
-            "Referer": url
-        }
+Hello Group-IB Team,
 
-        // ambil halaman pertama
-        const page = await axios.get(url, { headers })
+I have identified a fake account impersonating Group-IB on Telegram.
 
-        const $ = cheerio.load(page.data)
+SUSPECT ACCOUNT:
+(nama)
 
-        const token = $('input[name="_token"]').val()
+REQUESTED ACTIONS:
+Apply [FAKE] label to the listed account.
+Apply [SCAM] label if the account is actively soliciting funds.
 
-        if (!token) {
-            return {
-                status: false,
-                message: "Token tidak ditemukan"
-            }
-        }
-
-        const action = $("form").attr("action")
-
-        const postUrl = action.startsWith("http")
-            ? action
-            : new URL(action, url).href
-
-        const data = new URLSearchParams()
-        data.append("_token", token)
-
-        const post = await axios.post(
-            postUrl,
-            data.toString(),
-            {
-                headers: {
-                    ...headers,
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                maxRedirects: 0,
-                validateStatus: null
-            }
-        )
-
-        const final = post.headers.location
-
-        if (!final) {
-            return {
-                status: false,
-                message: "Link tujuan tidak ditemukan"
-            }
-        }
-
-        return {
-            status: true,
-            result: final
-        }
-
-    } catch (err) {
-        return {
-            status: false,
-            message: "Gagal bypass safelinku",
-            error: err.message
-        }
-    }
-}
+Priority: HIGH`
+  }
+]
 
 module.exports = function (app) {
 
-    app.get("/download/safelinku", async (req, res) => {
+  app.get("/mail/method", async (req, res) => {
 
-        const { apikey, url } = req.query
+    const { apikey, nama } = req.query
 
-        if (!apikey) {
-            return res.json({
-                status: false,
-                error: "Isi Parameter Apikey."
-            })
-        }
+    if (!apikey) {
+      return res.json({
+        status: false,
+        error: "Isi Parameter Apikey."
+      })
+    }
 
-        if (!config.apikey.includes(apikey)) {
-            return res.json({
-                status: false,
-                error: "Apikey Tidak Valid!"
-            })
-        }
+    if (!config.apikey.includes(apikey)) {
+      return res.json({
+        status: false,
+        error: "Apikey Tidak Valid!"
+      })
+    }
 
-        if (!url) {
-            return res.json({
-                status: false,
-                error: "URL Safelinku tidak boleh kosong."
-            })
-        }
+    if (!nama) {
+      return res.json({
+        status: false,
+        error: "Parameter nama diperlukan."
+      })
+    }
 
-        const safelinkuDomains = [
-            "safelinku.com",
-            "sfl.gl",
-            "safelink.me",
-            "safelink.id"
-        ]
+    try {
 
-        const isSafelinku = safelinkuDomains.some(domain => url.includes(domain))
+      const random = methods[Math.floor(Math.random() * methods.length)]
 
-        if (!isSafelinku) {
-            return res.json({
-                status: false,
-                error: "URL Safelinku tidak valid."
-            })
-        }
+      const subject = random.subject.replace("(nama)", nama)
+      const text = random.text.replace(/\(nama\)/g, nama)
 
-        try {
+      res.json({
+        status: true,
+        subject,
+        text
+      })
 
-            const result = await skipSafelinku(url)
+    } catch (err) {
 
-            res.json(result)
+      res.status(500).json({
+        status: false,
+        error: "Gagal mengambil method"
+      })
 
-        } catch (error) {
+    }
 
-            console.error(error)
-
-            res.status(500).json({
-                status: false,
-                error: "Gagal bypass safelinku."
-            })
-
-        }
-
-    })
+  })
 
 }
